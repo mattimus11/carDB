@@ -13,7 +13,7 @@ app.set("view engine", "ejs");
 // Serve static files (CSS)
 app.use(express.static(path.join(__dirname, 'public')));
 
-const couchdbUrl = 'http://admin:steeldesk6@localhost:5984'; // Use your CouchDB URL and credentials
+const couchdbUrl = process.env.couch_uri; // Use your CouchDB URL and credentials
 const dbName = "cars_db"; // Main database name
 const couch = nano(couchdbUrl);
 const db = couch.db.use(dbName);
