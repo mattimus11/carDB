@@ -4,11 +4,39 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Car Details</title>
+  <link rel="stylesheet" href="/styles.css"> <!-- Link to CSS file -->
 </head>
 <body>
-  <h1>Car Details</h1>
-  <p><strong>Car:</strong> <%= car.carID %> <%= car.carModel%></p>
-  <p><strong>Parts:</strong></p>
-  <a href="/">Back to Car List</a>
+  <div class="container">
+    <h1>Car Details</h1>
+    <p class="car-info"><strong>Car:</strong> <%= car.carID %> <%= car.carModel %></p>
+    <h2>Parts:</h2>
+    <ul class="parts-list">
+      <% parts.forEach(part => { %>
+      <li class="part-item">
+        <strong><%= part.partName %>:</strong> <%= part.partDescription %>
+        <div class="part-actions">
+          <form action="/delete-part/<%= car._id %>/<%= part._id %>" method="POST" class="delete-form">
+            <button type="submit" class="delete-button">Delete</button>
+          </form>
+          <form action="/edit-part/<%= car._id %>/<%= part._id %>" method="POST" class="edit-form">
+            <input type="text" name="partName" placeholder="New Part Name" required />
+            <input type="text" name="partDescription" placeholder="New Description" required />
+            <button type="submit" class="edit-button">Edit</button>
+          </form>
+        </div>
+      </li>
+      <% }) %>
+    </ul>
+
+    <h3>Add Part</h3>
+    <form action="/add-part/<%= car._id %>" method="POST" class="add-part-form">
+      <input type="text" name="partName" placeholder="Part Name" required />
+      <input type="text" name="partDescription" placeholder="Description" required />
+      <button type="submit" class="add-button">Add Part</button>
+    </form>
+    
+    <a href="/" class="back-link">Back to Car List</a>
+  </div>
 </body>
 </html>

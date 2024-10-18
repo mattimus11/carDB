@@ -1,0 +1,146 @@
+/* General Styles */
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4; /* Light background for the body */
+  }
+  
+  .container {
+    max-width: 800px; /* Max width for the container */
+    margin: 20px auto; /* Centered horizontally */
+    padding: 20px; /* Padding around content */
+    background-color: #ffffff; /* White background for the container */
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+  }
+  
+  /* Heading Styles */
+  h1, h2, h3 {
+    color: #333; /* Dark text color */
+    margin-bottom: 10px; /* Space below headings */
+  }
+  
+  h1 {
+    font-size: 2em; /* Larger font size for main heading */
+  }
+  
+  h2 {
+    font-size: 1.5em; /* Medium font size for subheadings */
+  }
+  
+  h3 {
+    font-size: 1.2em; /* Smaller font size for tertiary headings */
+  }
+  
+  /* Car Info Styles */
+  .car-info {
+    font-size: 1.2em; /* Slightly larger font for car info */
+    margin-bottom: 15px; /* Space below car info */
+  }
+  
+  /* Parts List Styles */
+  .parts-list {
+    list-style-type: none; /* Remove bullet points */
+    padding: 0; /* Remove padding */
+  }
+  
+  .part-item {
+    padding: 15px; /* Padding for each item */
+    border-bottom: 1px solid #e0e0e0; /* Light border for separation */
+    display: flex; /* Flexbox for horizontal layout */
+    justify-content: space-between; /* Space between items */
+    align-items: center; /* Align items vertically */
+  }
+  
+  .part-item:last-child {
+    border-bottom: none; /* Remove border from last item */
+  }
+  
+  /* Action Buttons */
+  .part-actions {
+    display: flex; /* Use flexbox for button layout */
+    gap: 10px; /* Space between buttons */
+  }
+  
+  .delete-button, .edit-button, .add-button {
+    padding: 8px 12px; /* Padding for buttons */
+    border: none; /* Remove default border */
+    border-radius: 5px; /* Rounded corners */
+    color: #ffffff; /* White text color */
+    cursor: pointer; /* Pointer cursor on hover */
+    transition: background-color 0.3s; /* Smooth transition for hover */
+  }
+  
+  .delete-button {
+    background-color: #dc3545; /* Red for delete */
+  }
+  
+  .delete-button:hover {
+    background-color: #c82333; /* Darker red on hover */
+  }
+  
+  .edit-button {
+    background-color: #007bff; /* Blue for edit */
+  }
+  
+  .edit-button:hover {
+    background-color: #0056b3; /* Darker blue on hover */
+  }
+  
+  .add-button {
+    background-color: #28a745; /* Green for add */
+  }
+  
+  .add-button:hover {
+    background-color: #218838; /* Darker green on hover */
+  }
+  
+  /* Back Link Styles */
+  .back-link {
+    display: inline-block; /* Block for spacing */
+    margin-top: 20px; /* Space above link */
+    text-decoration: none; /* Remove underline */
+    color: #007bff; /* Blue color for link */
+    font-weight: bold; /* Bold text */
+    transition: color 0.3s; /* Smooth transition */
+  }
+  
+  .back-link:hover {
+    text-decoration: underline; /* Underline on hover */
+  }
+  
+  /* Form Styles */
+  .add-part-form input,
+  .edit-form input {
+    margin-right: 10px; /* Space between inputs */
+    padding: 10px; /* Padding for inputs */
+    border: 1px solid #ccc; /* Light border */
+    border-radius: 4px; /* Rounded corners */
+    width: calc(100% - 120px); /* Full width minus button size */
+    max-width: 200px; /* Max width for inputs */
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 600px) {
+    .container {
+      padding: 15px; /* Reduced padding for smaller screens */
+    }
+  
+    .part-item {
+      flex-direction: column; /* Stack items vertically on small screens */
+      align-items: flex-start; /* Align items to the left */
+    }
+  
+    .part-actions {
+      flex-direction: column; /* Stack actions vertically */
+      gap: 5px; /* Reduced space between buttons */
+    }
+  
+    .add-part-form input,
+    .edit-form input {
+      width: 100%; /* Full width for inputs on small screens */
+      margin: 5px 0; /* Space above and below inputs */
+    }
+  }
+  

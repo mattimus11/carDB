@@ -2,12 +2,16 @@ require("dotenv").config();
 const express = require("express");
 const bodyParser = require("body-parser");
 const nano = require("nano");
+const path = require("path");
 
 const app = express();
 const PORT = 3000;
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.set("view engine", "ejs");
+
+// Serve static files (CSS)
+app.use(express.static(path.join(__dirname, 'public')));
 
 const couchdbUrl = 'http://admin:steeldesk6@localhost:5984'; // Use your CouchDB URL and credentials
 const dbName = "cars_db"; // Main database name
@@ -41,31 +45,64 @@ app.post("/delete/:id", async (req, res) => {
   res.redirect("/");
 });
 
-// Route to view car details
+// Route to view car details and parts
 app.get("/car/:id", async (req, res) => {
   const car = await db.get(req.params.id);
-
-  // Create a parts database name based on the carID
   const partsDbName = `${car.carID.toLowerCase()}_parts`;
+  let parts = [];
 
   try {
-    // Check if the parts database exists
-    await couch.db.use(partsDbName).info(); // Using `.info()` to check for existence
+    await couch.db.use(partsDbName).info(); // Check if the parts database exists
+    const partsDb = couch.db.use(partsDbName);
+    const partsList = await partsDb.list({ include_docs: true });
+    parts = partsList.rows.map(row => row.doc);
   } catch (error) {
-    // If the database doesn't exist, create it
     if (error.statusCode === 404) {
-      try {
-        await couch.db.create(partsDbName);
-        console.log(`Created parts database: ${partsDbName}`);
-      } catch (creationError) {
-        console.error("Error creating parts database:", creationError);
-      }
+      await couch.db.create(partsDbName);
+      console.log(`Created parts database: ${partsDbName}`);
     } else {
       console.error("Error checking parts database:", error);
     }
   }
 
-  res.render("car-details", { car });
+  res.render("car-details", { car, parts });
+});
+
+// Route to add a part
+app.post("/add-part/:carId", async (req, res) => {
+  const carId = req.params.carId;
+  const partName = req.body.partName;
+  const partDescription = req.body.partDescription;
+  const partsDbName = `${(await db.get(carId)).carID.toLowerCase()}_parts`;
+
+  const partsDb = couch.db.use(partsDbName);
+  await partsDb.insert({ partName, partDescription });
+  res.redirect(`/car/${carId}`);
+});
+
+// Route to delete a part
+app.post("/delete-part/:carId/:partId", async (req, res) => {
+  const carId = req.params.carId;
+  const partId = req.params.partId;
+  const partsDbName = `${(await db.get(carId)).carID.toLowerCase()}_parts`;
+  const partsDb = couch.db.use(partsDbName);
+  
+  const part = await partsDb.get(partId);
+  await partsDb.destroy(partId, part._rev);
+  res.redirect(`/car/${carId}`);
+});
+
+// Route to edit a part
+app.post("/edit-part/:carId/:partId", async (req, res) => {
+  const carId = req.params.carId;
+  const partId = req.params.partId;
+  const { partName, partDescription } = req.body;
+  const partsDbName = `${(await db.get(carId)).carID.toLowerCase()}_parts`;
+  const partsDb = couch.db.use(partsDbName);
+
+  const part = await partsDb.get(partId);
+  await partsDb.insert({ _id: partId, _rev: part._rev, partName, partDescription });
+  res.redirect(`/car/${carId}`);
 });
 
 // Start the server
