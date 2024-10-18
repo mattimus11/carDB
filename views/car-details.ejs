@@ -5,6 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Car Details</title>
   <link rel="stylesheet" href="/styles.css"> <!-- Link to CSS file -->
+  <style>
+    /* Add styles for the maintenance record actions */
+    .record-actions {
+      display: flex; 
+      align-items: center; /* Aligns items vertically in the center */
+      gap: 10px; /* Adds space between the buttons */
+    }
+  </style>
 </head>
 <body>
   <div class="container">
@@ -32,6 +40,32 @@
               <form action="/delete-part/<%= car._id %>/<%= part._id %>" method="POST" class="delete-form" style="display: inline;">
                   <button type="submit" class="delete-button">Delete</button>
               </form>
+          </div>
+        </li>
+      <% }) %>
+    </ul>
+
+    <h3>Maintenance Records</h3>
+    <form action="/add-maintenance/<%= car._id %>" method="POST" class="add-maintenance-form">
+      <input type="date" name="date" required />
+      <input type="text" name="description" placeholder="Maintenance Description" required />
+      <button type="submit" class="add-button">Add Maintenance Record</button>
+    </form>
+
+    <h2>Records:</h2>
+    <ul class="maintenance-list">
+      <% maintenanceRecords.forEach(record => { %>
+        <li class="record-item">
+          <strong>Date:</strong> <%= record.date %> - <strong>Description:</strong> <%= record.description %>
+          <div class="record-actions">
+            <form action="/edit-maintenance/<%= car._id %>/<%= record._id %>" method="POST" class="edit-form" style="margin-right: 10px;">
+              <input type="date" name="date" required value="<%= record.date %>" />
+              <input type="text" name="description" required value="<%= record.description %>" />
+              <button type="submit" class="edit-button">Edit</button>
+            </form>
+            <form action="/delete-maintenance/<%= car._id %>/<%= record._id %>" method="POST" class="delete-form" style="display: inline;">
+              <button type="submit" class="delete-button">Delete</button>
+            </form>
           </div>
         </li>
       <% }) %>

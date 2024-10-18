@@ -1,0 +1,163 @@
+/* General Styles */
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f0f0f0; /* Softer light background for the body */
+}
+
+.container {
+    max-width: 800px; /* Max width for the container */
+    margin: 40px auto; /* Increased margin for better spacing */
+    padding: 30px; /* More padding around content */
+    background-color: #ffffff; /* White background for the container */
+    border-radius: 12px; /* More pronounced rounded corners */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); /* Deeper shadow for better depth */
+}
+
+/* Heading Styles */
+h1, h2, h3 {
+    color: #2c3e50; /* Darker color for better contrast */
+    margin-bottom: 15px; /* Increased space below headings */
+}
+
+h1 {
+    font-size: 2.5em; /* Larger font size for main heading */
+    font-weight: bold; /* Bold for emphasis */
+}
+
+h2 {
+    font-size: 1.8em; /* Slightly larger subheading */
+    margin-top: 20px; /* Space above subheading */
+}
+
+h3 {
+    font-size: 1.4em; /* Adjusted size for tertiary headings */
+    margin-top: 15px; /* Space above tertiary heading */
+}
+
+/* Car Info Styles */
+.car-info {
+    font-size: 1.2em; /* Slightly larger font for car info */
+    margin-bottom: 20px; /* Increased space below car info */
+    color: #34495e; /* Slightly softer color for text */
+}
+
+/* Parts List Styles */
+.parts-list {
+    list-style-type: none; /* Remove bullet points */
+    padding: 0; /* Remove padding */
+}
+
+.part-item {
+    padding: 15px; /* Padding for each item */
+    border-bottom: 1px solid #e0e0e0; /* Light border for separation */
+    display: flex; /* Flexbox for horizontal layout */
+    justify-content: space-between; /* Space between items */
+    align-items: center; /* Align items vertically */
+    transition: background-color 0.2s; /* Smooth transition for hover */
+}
+
+.part-info {
+    display: flex; /* Flex container for part info and edit form */
+    align-items: center; /* Center vertically */
+}
+
+/* Action Buttons */
+.part-actions {
+    margin-left: auto; /* Pushes action buttons to the right */
+    display: flex; /* Use flexbox for button layout */
+    gap: 5px; /* Space between buttons */
+    align-items: center; /* Align items vertically */
+}
+
+.delete-button, .edit-button, .add-button {
+    padding: 10px 15px; /* Padding for buttons */
+    border: none; /* Remove default border */
+    border-radius: 5px; /* Rounded corners */
+    color: #ffffff; /* White text color */
+    cursor: pointer; /* Pointer cursor on hover */
+    transition: background-color 0.3s, transform 0.2s; /* Smooth transition for hover and scale */
+}
+
+.delete-button {
+    background-color: #e74c3c; /* Red for delete */
+}
+
+.delete-button:hover {
+    background-color: #c0392b; /* Darker red on hover */
+    transform: scale(1.05); /* Slight scale on hover */
+}
+
+.edit-button {
+    background-color: #3498db; /* Blue for edit */
+}
+
+.edit-button:hover {
+    background-color: #2980b9; /* Darker blue on hover */
+    transform: scale(1.05); /* Slight scale on hover */
+}
+
+.add-button {
+    background-color: #2ecc71; /* Green for add */
+}
+
+.add-button:hover {
+    background-color: #27ae60; /* Darker green on hover */
+    transform: scale(1.05); /* Slight scale on hover */
+}
+
+/* Back Link Styles */
+.back-link {
+    display: inline-block; /* Block for spacing */
+    margin-top: 30px; /* Space above link */
+    text-decoration: none; /* Remove underline */
+    color: #3498db; /* Blue color for link */
+    font-weight: bold; /* Bold text */
+    transition: color 0.3s; /* Smooth transition */
+}
+
+.back-link:hover {
+    text-decoration: underline; /* Underline on hover */
+}
+
+/* Form Styles */
+.add-part-form input,
+.edit-form input {
+    margin-right: 15px; /* Space between inputs */
+    padding: 10px; /* Padding for inputs */
+    border: 1px solid #bdc3c7; /* Light border */
+    border-radius: 4px; /* Rounded corners */
+    width: calc(100% - 140px); /* Full width minus button size */
+    max-width: 220px; /* Max width for inputs */
+    transition: border-color 0.3s; /* Smooth transition for border color */
+}
+
+.add-part-form input:focus,
+.edit-form input:focus {
+    border-color: #3498db; /* Highlight border on focus */
+    outline: none; /* Remove outline */
+}
+
+/* Responsive Design */
+@media (max-width: 600px) {
+    .container {
+        padding: 20px; /* Reduced padding for smaller screens */
+    }
+
+    .part-item {
+        flex-direction: column; /* Stack items vertically on small screens */
+        align-items: flex-start; /* Align items to the left */
+    }
+
+    .part-actions {
+        flex-direction: column; /* Stack actions vertically */
+        gap: 8px; /* Reduced space between buttons */
+    }
+
+    .add-part-form input,
+    .edit-form input {
+        width: 100%; /* Full width for inputs on small screens */
+        margin: 5px 0; /* Space above and below inputs */
+    }
+}
