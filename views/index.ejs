@@ -3,27 +3,38 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="/styles.css"> <!-- Link to your CSS file -->
   <title>Car Parts Database</title>
 </head>
 <body>
-  <h1>Car Parts Database</h1>
+  <div class="container">
+    <h1>Car Parts Database</h1>
 
-  <form action="/add-car" method="POST">
-    <input type="text" name="carInfo" placeholder="Enter car make and model" required>
-    <button type="submit">Add Car</button>
-  </form>
-  
+    <form action="/add-car" method="POST" class="add-part-form">
+      <input
+        type="text"
+        name="carInfo"
+        placeholder="Enter car make and model (e.g., Toyota Camry)"
+        required
+      />
+      <button type="submit" class="add-button">Add Car</button>
+    </form>
 
-  <h2>Available Cars</h2>
-  <ul>
-    <% cars.forEach(car => { %>
-      <li>
-        <a href="/car/<%= car._id %>"><%= car.carID %> <%=car.carModel%></a> <!-- Make the car ID a clickable link -->
-        <form action="/delete/<%= car._id %>" method="POST" style="display:inline;">
-          <button type="submit">Delete</button>
-        </form>
+    <h2>Cars in List</h2>
+    <ul class="parts-list">
+      <% cars.forEach(car => { %>
+      <li class="part-item">
+        <div class="car-info">
+          <a href="/car/<%= car._id %>"><%= car.carID %> <%= car.carModel %></a>
+        </div>
+        <div class="part-actions">
+          <form action="/delete/<%= car._id %>" method="POST" style="display: inline">
+            <button type="submit" class="delete-button">Delete</button>
+          </form>
+        </div>
       </li>
-    <% }) %>
-  </ul>
+      <% }) %>
+    </ul>
+  </div>
 </body>
 </html>

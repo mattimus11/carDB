@@ -1,87 +1,115 @@
 require("dotenv").config();
 const express = require("express");
 const bodyParser = require("body-parser");
+const nano = require("nano");
+const path = require("path");
+
 const app = express();
 const PORT = 3000;
-const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
+
 app.use(bodyParser.urlencoded({ extended: true }));
 app.set("view engine", "ejs");
 
-const uri =
-  "mongodb+srv://howelldatabase:Steeldesk1216!@cluster0.gfzhw.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
+// Serve static files (CSS)
+app.use(express.static(path.join(__dirname, 'public')));
 
-// Create a MongoClient with a MongoClientOptions object to set the Stable API version
-const client = new MongoClient(uri, {
-  serverApi: {
-    version: ServerApiVersion.v1,
-    strict: true,
-    deprecationErrors: true,
-  },
+const couchdbUrl = 'http://admin:steeldesk6@localhost:5984'; // Use your CouchDB URL and credentials
+const dbName = "cars_db"; // Main database name
+const couch = nano(couchdbUrl);
+const db = couch.db.use(dbName);
+
+// Create the main database if it doesn't exist
+couch.db.create(dbName).catch(err => {
+  if (err.statusCode !== 412) console.error("Database creation error:", err);
 });
 
-async function run() {
-  // Connect the client to the server	(optional starting in v4.7)
-  await client.connect();
-  // Send a ping to confirm a successful connection
-  await client.db("admin").command({ ping: 1 });
-  console.log("Pinged your deployment. You successfully connected to MongoDB!");
-}
-
-run().catch(console.dir);
-
-//Route to index
+// Route to index
 app.get("/", async (req, res) => {
-  const collection = client.db("cars").collection("cars");
-  const cars = await collection.find().toArray();
-  res.render("index", {
-    cars,
-  });
+  const cars = await db.list({ include_docs: true });
+  res.render("index", { cars: cars.rows.map(row => row.doc) });
 });
 
-//Route to post cars to DB
+// Route to add a car
 app.post("/add-car", async (req, res) => {
-  const collection = client.db("cars").collection("cars");
-  const carInfo = req.body.carInfo; // Get the input
-  const parts = carInfo.split(" "); // Split by spaces
-
-  const carID = parts[0]; // First part is car make
-  const carModel = parts.slice(1).join(" "); // Remaining parts are car model
-
-  try {
-    // Insert both fields into the database
-    await collection.insertOne({ carID, carModel });
-    res.redirect("/"); // Redirect after successful insert
-  } catch (error) {
-    console.error("Error adding car:", error);
-    res.status(500).send("Internal Server Error");
-  }
-});
-
-//Route to delete
-app.post("/delete/:id", async (req, res) => {
-  const collection = client.db("cars").collection("cars");
-  await collection.findOneAndDelete({
-    _id: new ObjectId(req.params.id),
-  });
+  const carInfo = req.body.carInfo.split(" ");
+  const carID = carInfo[0];
+  const carModel = carInfo.slice(1).join(" ");
+  await db.insert({ carID, carModel });
   res.redirect("/");
 });
 
-//Links to each car
-app.get("/car/:id", async (req, res) => {
-  const { id } = req.params;
-  try {
-    const collection = client.db("cars").collection("cars");
-    const car = await collection.findOne({ _id: new ObjectId(id) }); // Find the car by ID
-    if (!car) {
-      return res.status(404).send("Car not found");
-    }
-    res.render("car-details", { car }); // Render a new EJS template with car details
-  } catch (error) {
-    console.error("Error fetching car details:", error);
-    res.status(500).send("Internal Server Error");
-  }
+// Route to delete a car
+app.post("/delete/:id", async (req, res) => {
+  const car = await db.get(req.params.id);
+  await db.destroy(req.params.id, car._rev);
+  res.redirect("/");
 });
 
+// Route to view car details and parts
+app.get("/car/:id", async (req, res) => {
+  const car = await db.get(req.params.id);
+  const partsDbName = `${car.carID.toLowerCase()}_parts`;
+  let parts = [];
+
+  try {
+    await couch.db.use(partsDbName).info(); // Check if the parts database exists
+    const partsDb = couch.db.use(partsDbName);
+    const partsList = await partsDb.list({ include_docs: true });
+    parts = partsList.rows.map(row => row.doc);
+  } catch (error) {
+    if (error.statusCode === 404) {
+      await couch.db.create(partsDbName);
+      console.log(`Created parts database: ${partsDbName}`);
+    } else {
+      console.error("Error checking parts database:", error);
+    }
+  }
+
+  res.render("car-details", { car, parts });
+});
+
+// Route to add a part
+app.post("/add-part/:carId", async (req, res) => {
+  const carId = req.params.carId;
+  const partName = req.body.partName;
+  const partDescription = req.body.partDescription;
+  const quantity = req.body.quantity; // Get quantity from the request body
+  const partsDbName = `${(await db.get(carId)).carID.toLowerCase()}_parts`;
+
+  const partsDb = couch.db.use(partsDbName);
+  await partsDb.insert({ partName, partDescription, quantity }); // Save quantity
+  res.redirect(`/car/${carId}`);
+});
+
+
+// Route to delete a part
+app.post("/delete-part/:carId/:partId", async (req, res) => {
+  const carId = req.params.carId;
+  const partId = req.params.partId;
+  const partsDbName = `${(await db.get(carId)).carID.toLowerCase()}_parts`;
+  const partsDb = couch.db.use(partsDbName);
+  
+  const part = await partsDb.get(partId);
+  await partsDb.destroy(partId, part._rev);
+  res.redirect(`/car/${carId}`);
+});
+
+// Route to edit a part
+// Route to edit a part
+app.post("/edit-part/:carId/:partId", async (req, res) => {
+  const carId = req.params.carId;
+  const partId = req.params.partId;
+  const { quantity } = req.body; // Now getting quantity from the request body
+  const partsDbName = `${(await db.get(carId)).carID.toLowerCase()}_parts`;
+  const partsDb = couch.db.use(partsDbName);
+
+  const part = await partsDb.get(partId);
+  await partsDb.insert({ _id: partId, _rev: part._rev, partName: part.partName, quantity }); // Keep partName and update quantity
+  res.redirect(`/car/${carId}`);
+});
+
+
+// Start the server
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
