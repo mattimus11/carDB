@@ -63,6 +63,13 @@ h3 {
     align-items: center; /* Center vertically */
 }
 
+/* Quantity Display Alignment */
+.quantity-display {
+    width: 60px; /* Fixed width for quantity display */
+    text-align: right; /* Align text to the right */
+    margin-left: 10px; /* Add space on the left of quantity display */
+}
+
 /* Action Buttons */
 .part-actions {
     margin-left: auto; /* Pushes action buttons to the right */
@@ -71,7 +78,7 @@ h3 {
     align-items: center; /* Align items vertically */
 }
 
-.delete-button, .edit-button, .add-button {
+.delete-button, .edit-button, .update-button, .add-button {
     padding: 10px 15px; /* Padding for buttons */
     border: none; /* Remove default border */
     border-radius: 5px; /* Rounded corners */
@@ -95,6 +102,15 @@ h3 {
 
 .edit-button:hover {
     background-color: #2980b9; /* Darker blue on hover */
+    transform: scale(1.05); /* Slight scale on hover */
+}
+
+.update-button {
+    background-color: #f39c12; /* Orange for update */
+}
+
+.update-button:hover {
+    background-color: #e67e22; /* Darker orange on hover */
     transform: scale(1.05); /* Slight scale on hover */
 }
 
@@ -123,8 +139,7 @@ h3 {
 
 /* Form Styles */
 .add-part-form input,
-.edit-form input,
-.add-maintenance-form input {
+.edit-form input {
     margin-right: 15px; /* Space between inputs */
     padding: 10px; /* Padding for inputs */
     border: 1px solid #bdc3c7; /* Light border */
@@ -135,28 +150,14 @@ h3 {
 }
 
 .add-part-form input:focus,
-.edit-form input:focus,
-.add-maintenance-form input:focus {
+.edit-form input:focus {
     border-color: #3498db; /* Highlight border on focus */
     outline: none; /* Remove outline */
 }
 
-/* Maintenance Records Styles */
-.record-actions {
-    display: flex; /* Flexbox layout */
-    align-items: center; /* Center items vertically */
-    gap: 10px; /* Space between items */
-}
-
-.record-actions input {
-    padding: 10px; /* Ensure inputs have the same padding */
-    margin: 0; /* No margin to keep alignment consistent */
-    border-radius: 4px; /* Rounded corners */
-    border: 1px solid #bdc3c7; /* Light border */
-}
-
-.record-actions button {
-    padding: 10px 15px; /* Same padding for buttons */
+/* Add margin below the add-part-form to create space */
+.add-part-form {
+    margin-bottom: 20px; /* Adjust the value for desired space */
 }
 
 /* Responsive Design */
@@ -176,8 +177,7 @@ h3 {
     }
 
     .add-part-form input,
-    .edit-form input,
-    .add-maintenance-form input {
+    .edit-form input {
         width: 100%; /* Full width for inputs on small screens */
         margin: 5px 0; /* Space above and below inputs */
     }

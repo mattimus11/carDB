@@ -5,6 +5,86 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Car Details</title>
   <link rel="stylesheet" href="/styles.css"> <!-- Link to CSS file -->
+  <style>
+    /* Fixed width for the quantity display to prevent shifting */
+    .quantity-display {
+      display: inline-block;
+      width: 50px; /* Fixed width for alignment */
+      text-align: right; /* Align text to the right */
+    }
+
+    /* Edit actions container */
+    .edit-actions {
+      display: none; /* Start hidden */
+      align-items: center; /* Center vertically */
+      margin-left: auto; /* Push to the right */
+      gap: 10px; /* Space between buttons */
+    }
+
+    /* Show edit actions when needed */
+    .edit-actions.visible {
+      display: flex; /* Show when visible */
+    }
+
+    /* Prevent button shifting */
+    .part-item {
+      display: flex; /* Flexbox for layout */
+      justify-content: space-between; /* Space between items */
+      align-items: center; /* Align items vertically */
+      margin-bottom: 10px; /* Space between list items */
+    }
+
+    .part-info {
+      display: flex; /* Flex container for part info */
+      align-items: center; /* Center vertically */
+      width: 100%; /* Take full width */
+    }
+
+    /* Align edit button to the right */
+    .edit-button {
+      margin-left: auto; /* Pushes the edit button to the right */
+      background-color: #3498db; /* Style the button */
+      color: #fff; /* White text */
+      border: none; /* No border */
+      padding: 5px 10px; /* Padding */
+      border-radius: 5px; /* Rounded corners */
+      cursor: pointer; /* Pointer cursor */
+      transition: background-color 0.3s; /* Smooth transition */
+    }
+
+    .edit-button:hover {
+      background-color: #2980b9; /* Darker on hover */
+    }
+
+    /* Update and delete buttons */
+    .update-button, .delete-button {
+      margin-left: 10px; /* Space between buttons */
+      display: none; /* Start hidden */
+    }
+
+    /* Show buttons when visible */
+    .edit-actions.visible .update-button,
+    .edit-actions.visible .delete-button {
+      display: inline; /* Show when visible */
+    }
+
+    /* Cancel button */
+    .cancel-button {
+      display: none; /* Start hidden */
+      background-color: #e74c3c; /* Style the button */
+      color: #fff; /* White text */
+      border: none; /* No border */
+      padding: 5px 10px; /* Padding */
+      border-radius: 5px; /* Rounded corners */
+      cursor: pointer; /* Pointer cursor */
+      transition: background-color 0.3s; /* Smooth transition */
+    }
+
+    /* Show cancel button when visible */
+    .edit-actions.visible .cancel-button {
+      display: inline; /* Show when visible */
+    }
+  </style>
 </head>
 <body>
   <div class="container">
@@ -23,47 +103,39 @@
       <% parts.forEach(part => { %>
         <li class="part-item">
           <strong><%= part.partName %></strong>
-          <span><%= part.quantity !== undefined && part.quantity !== null ? part.quantity : 'N/A' %></span> <!-- Display quantity or N/A -->
+          <span class="quantity-display"><%= part.quantity !== undefined && part.quantity !== null ? part.quantity : 'N/A' %></span>
           <div class="part-info">
-              <form action="/edit-part/<%= car._id %>/<%= part._id %>" method="POST" class="edit-form part-actions">
-                  <input type="number" name="quantity" placeholder="Quantity" required value="<%= part.quantity !== undefined && part.quantity !== null ? part.quantity : '' %>" />
-                  <button type="submit" class="edit-button">Edit</button>
-              </form>
-              <form action="/delete-part/<%= car._id %>/<%= part._id %>" method="POST" class="delete-form">
-                  <button type="submit" class="delete-button">Delete</button>
-              </form>
+              <button type="button" class="edit-button" onclick="toggleEdit('<%= part._id %>')">Edit</button>
+              <div id="edit-actions-<%= part._id %>" class="edit-actions">
+                  <form action="/edit-part/<%= car._id %>/<%= part._id %>" method="POST" class="edit-form part-actions">
+                      <input type="number" name="quantity" placeholder="Quantity" required value="<%= part.quantity !== undefined && part.quantity !== null ? part.quantity : '' %>" />
+                      <button type="submit" class="update-button">Update</button>
+                  </form>
+                  <form action="/delete-part/<%= car._id %>/<%= part._id %>" method="POST" class="delete-form">
+                      <button type="submit" class="delete-button">Delete</button>
+                  </form>
+                  <button type="button" class="cancel-button" onclick="toggleEdit('<%= part._id %>')">X</button>
+              </div>
           </div>
         </li>
       <% }) %>
     </ul>
-
-    <h3>Add Maintenance Record</h3>
-    <form action="/add-maintenance/<%= car._id %>" method="POST" class="add-maintenance-form">
-      <input type="date" name="date" required />
-      <input type="text" name="description" placeholder="Maintenance Description" required />
-      <button type="submit" class="add-button">Add Maintenance Record</button>
-    </form>
-
-    <h2>Maintenance Records:</h2>
-    <ul class="maintenance-list">
-      <% maintenanceRecords.forEach(record => { %>
-        <li class="record-item">
-          <strong>Date:</strong> <%= record.date %> - <strong>Description:</strong> <%= record.description %>
-          <div class="record-actions" style="display: flex; align-items: center; gap: 10px;">
-            <form action="/edit-maintenance/<%= car._id %>/<%= record._id %>" method="POST" class="edit-form" style="display: flex; align-items: center; gap: 5px;">
-              <input type="date" name="date" required value="<%= record.date %>" />
-              <input type="text" name="description" required value="<%= record.description %>" />
-              <button type="submit" class="edit-button">Edit</button>
-            </form>
-            <form action="/delete-maintenance/<%= car._id %>/<%= record._id %>" method="POST" class="delete-form">
-              <button type="submit" class="delete-button">Delete</button>
-            </form>
-          </div>
-        </li>
-      <% }) %>
-    </ul>
-
     <a href="/" class="back-link">Back to Car List</a>
   </div>
+
+  <script>
+    function toggleEdit(partId) {
+      const actionsDiv = document.getElementById(`edit-actions-${partId}`);
+      const editButton = document.querySelector(`.edit-button[onclick="toggleEdit('${partId}')"]`);
+
+      if (actionsDiv.classList.contains('visible')) {
+        actionsDiv.classList.remove('visible'); // Hide the edit actions
+        editButton.style.display = 'inline'; // Show the edit button again
+      } else {
+        actionsDiv.classList.add('visible'); // Show the edit actions
+        editButton.style.display = 'none'; // Hide the edit button when editing
+      }
+    }
+  </script>
 </body>
 </html>
