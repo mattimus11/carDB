@@ -9,20 +9,20 @@ const PORT = 3000;
 app.use(bodyParser.urlencoded({ extended: true }));
 app.set("view engine", "ejs");
 
-const couchdbUrl = process.env.couch_uri; // Use your CouchDB URL and credentials
-const dbName = "cars_db"; // Database name
-const couch = nano(couchdbUrl); // Make sure to use 'couchdbUrl' here
+const couchdbUrl = 'http://admin:steeldesk6@localhost:5984'; // Use your CouchDB URL and credentials
+const dbName = "cars_db"; // Main database name
+const couch = nano(couchdbUrl);
 const db = couch.db.use(dbName);
 
-// Create the database if it doesn't exist
-couch.db.create(dbName).catch((err) => {
+// Create the main database if it doesn't exist
+couch.db.create(dbName).catch(err => {
   if (err.statusCode !== 412) console.error("Database creation error:", err);
 });
 
 // Route to index
 app.get("/", async (req, res) => {
   const cars = await db.list({ include_docs: true });
-  res.render("index", { cars: cars.rows.map((row) => row.doc) });
+  res.render("index", { cars: cars.rows.map(row => row.doc) });
 });
 
 // Route to add a car
@@ -44,6 +44,27 @@ app.post("/delete/:id", async (req, res) => {
 // Route to view car details
 app.get("/car/:id", async (req, res) => {
   const car = await db.get(req.params.id);
+
+  // Create a parts database name based on the carID
+  const partsDbName = `${car.carID.toLowerCase()}_parts`;
+
+  try {
+    // Check if the parts database exists
+    await couch.db.use(partsDbName).info(); // Using `.info()` to check for existence
+  } catch (error) {
+    // If the database doesn't exist, create it
+    if (error.statusCode === 404) {
+      try {
+        await couch.db.create(partsDbName);
+        console.log(`Created parts database: ${partsDbName}`);
+      } catch (creationError) {
+        console.error("Error creating parts database:", creationError);
+      }
+    } else {
+      console.error("Error checking parts database:", error);
+    }
+  }
+
   res.render("car-details", { car });
 });
 
