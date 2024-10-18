@@ -15,14 +15,14 @@ const couch = nano(couchdbUrl); // Make sure to use 'couchdbUrl' here
 const db = couch.db.use(dbName);
 
 // Create the database if it doesn't exist
-couch.db.create(dbName).catch(err => {
+couch.db.create(dbName).catch((err) => {
   if (err.statusCode !== 412) console.error("Database creation error:", err);
 });
 
 // Route to index
 app.get("/", async (req, res) => {
   const cars = await db.list({ include_docs: true });
-  res.render("index", { cars: cars.rows.map(row => row.doc) });
+  res.render("index", { cars: cars.rows.map((row) => row.doc) });
 });
 
 // Route to add a car
