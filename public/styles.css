@@ -123,7 +123,8 @@ h3 {
 
 /* Form Styles */
 .add-part-form input,
-.edit-form input {
+.edit-form input,
+.add-maintenance-form input {
     margin-right: 15px; /* Space between inputs */
     padding: 10px; /* Padding for inputs */
     border: 1px solid #bdc3c7; /* Light border */
@@ -134,9 +135,28 @@ h3 {
 }
 
 .add-part-form input:focus,
-.edit-form input:focus {
+.edit-form input:focus,
+.add-maintenance-form input:focus {
     border-color: #3498db; /* Highlight border on focus */
     outline: none; /* Remove outline */
+}
+
+/* Maintenance Records Styles */
+.record-actions {
+    display: flex; /* Flexbox layout */
+    align-items: center; /* Center items vertically */
+    gap: 10px; /* Space between items */
+}
+
+.record-actions input {
+    padding: 10px; /* Ensure inputs have the same padding */
+    margin: 0; /* No margin to keep alignment consistent */
+    border-radius: 4px; /* Rounded corners */
+    border: 1px solid #bdc3c7; /* Light border */
+}
+
+.record-actions button {
+    padding: 10px 15px; /* Same padding for buttons */
 }
 
 /* Responsive Design */
@@ -156,7 +176,8 @@ h3 {
     }
 
     .add-part-form input,
-    .edit-form input {
+    .edit-form input,
+    .add-maintenance-form input {
         width: 100%; /* Full width for inputs on small screens */
         margin: 5px 0; /* Space above and below inputs */
     }

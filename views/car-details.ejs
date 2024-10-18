@@ -5,14 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Car Details</title>
   <link rel="stylesheet" href="/styles.css"> <!-- Link to CSS file -->
-  <style>
-    /* Add styles for the maintenance record actions */
-    .record-actions {
-      display: flex; 
-      align-items: center; /* Aligns items vertically in the center */
-      gap: 10px; /* Adds space between the buttons */
-    }
-  </style>
 </head>
 <body>
   <div class="container">
@@ -32,12 +24,12 @@
         <li class="part-item">
           <strong><%= part.partName %></strong>
           <span><%= part.quantity !== undefined && part.quantity !== null ? part.quantity : 'N/A' %></span> <!-- Display quantity or N/A -->
-          <div class="part-info" style="display: flex; align-items: center;">
-              <form action="/edit-part/<%= car._id %>/<%= part._id %>" method="POST" class="edit-form part-actions" style="margin-right: 10px;">
+          <div class="part-info">
+              <form action="/edit-part/<%= car._id %>/<%= part._id %>" method="POST" class="edit-form part-actions">
                   <input type="number" name="quantity" placeholder="Quantity" required value="<%= part.quantity !== undefined && part.quantity !== null ? part.quantity : '' %>" />
                   <button type="submit" class="edit-button">Edit</button>
               </form>
-              <form action="/delete-part/<%= car._id %>/<%= part._id %>" method="POST" class="delete-form" style="display: inline;">
+              <form action="/delete-part/<%= car._id %>/<%= part._id %>" method="POST" class="delete-form">
                   <button type="submit" class="delete-button">Delete</button>
               </form>
           </div>
@@ -45,25 +37,25 @@
       <% }) %>
     </ul>
 
-    <h3>Maintenance Records</h3>
+    <h3>Add Maintenance Record</h3>
     <form action="/add-maintenance/<%= car._id %>" method="POST" class="add-maintenance-form">
       <input type="date" name="date" required />
       <input type="text" name="description" placeholder="Maintenance Description" required />
       <button type="submit" class="add-button">Add Maintenance Record</button>
     </form>
 
-    <h2>Records:</h2>
+    <h2>Maintenance Records:</h2>
     <ul class="maintenance-list">
       <% maintenanceRecords.forEach(record => { %>
         <li class="record-item">
           <strong>Date:</strong> <%= record.date %> - <strong>Description:</strong> <%= record.description %>
-          <div class="record-actions">
-            <form action="/edit-maintenance/<%= car._id %>/<%= record._id %>" method="POST" class="edit-form" style="margin-right: 10px;">
+          <div class="record-actions" style="display: flex; align-items: center; gap: 10px;">
+            <form action="/edit-maintenance/<%= car._id %>/<%= record._id %>" method="POST" class="edit-form" style="display: flex; align-items: center; gap: 5px;">
               <input type="date" name="date" required value="<%= record.date %>" />
               <input type="text" name="description" required value="<%= record.description %>" />
               <button type="submit" class="edit-button">Edit</button>
             </form>
-            <form action="/delete-maintenance/<%= car._id %>/<%= record._id %>" method="POST" class="delete-form" style="display: inline;">
+            <form action="/delete-maintenance/<%= car._id %>/<%= record._id %>" method="POST" class="delete-form">
               <button type="submit" class="delete-button">Delete</button>
             </form>
           </div>
