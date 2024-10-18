@@ -1,29 +1,18 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Car Parts Database</title>
-</head>
-<body>
-  <h1>Car Parts Database</h1>
+<h1>Car Parts Database</h1>
 
-  <form action="/add-car" method="POST">
-    <input type="text" name="carInfo" placeholder="Enter car make and model" required>
-    <button type="submit">Add Car</button>
-  </form>
-  
+<form action="/add-car" method="POST">
+  <input type="text" name="carID" placeholder="Enter car ID" required>
+  <input type="text" name="carModel" placeholder="Enter car model" required>
+  <button type="submit">Add Car</button>
+</form>
 
-  <h2>Available Cars</h2>
-  <ul>
-    <% cars.forEach(car => { %>
-      <li>
-        <a href="/car/<%= car._id %>"><%= car.carID %> <%=car.carModel%></a> <!-- Make the car ID a clickable link -->
-        <form action="/delete/<%= car._id %>" method="POST" style="display:inline;">
-          <button type="submit">Delete</button>
-        </form>
-      </li>
-    <% }) %>
-  </ul>
-</body>
-</html>
+<ul>
+  <% cars.forEach(car => { %>
+    <li>
+      <%= car._id %> - <%= car.model %>
+      <form action="/delete/<%= car._id %>" method="POST" style="display:inline;">
+        <button type="submit">Delete</button>
+      </form>
+    </li>
+  <% }) %>
+</ul>
