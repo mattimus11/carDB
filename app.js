@@ -73,12 +73,14 @@ app.post("/add-part/:carId", async (req, res) => {
   const carId = req.params.carId;
   const partName = req.body.partName;
   const partDescription = req.body.partDescription;
+  const quantity = req.body.quantity; // Get quantity from the request body
   const partsDbName = `${(await db.get(carId)).carID.toLowerCase()}_parts`;
 
   const partsDb = couch.db.use(partsDbName);
-  await partsDb.insert({ partName, partDescription });
+  await partsDb.insert({ partName, partDescription, quantity }); // Save quantity
   res.redirect(`/car/${carId}`);
 });
+
 
 // Route to delete a part
 app.post("/delete-part/:carId/:partId", async (req, res) => {
