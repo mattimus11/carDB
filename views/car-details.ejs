@@ -27,17 +27,18 @@
     }
 
     /* Prevent button shifting */
-    .part-item {
+    .part-item, .maintenance-item {
       display: flex; /* Flexbox for layout */
       justify-content: space-between; /* Space between items */
       align-items: center; /* Align items vertically */
       margin-bottom: 10px; /* Space between list items */
     }
 
-    .part-info {
+    .part-info, .maintenance-info {
       display: flex; /* Flex container for part info */
       align-items: center; /* Center vertically */
       width: 100%; /* Take full width */
+      gap: 10px; /* Space between buttons */
     }
 
     /* Align edit button to the right */
@@ -60,6 +61,25 @@
     .update-button, .delete-button {
       margin-left: 10px; /* Space between buttons */
       display: none; /* Start hidden */
+      background-color: #2ecc71; /* Green background for update */
+      color: #fff; /* White text */
+      border: none; /* No border */
+      padding: 5px 10px; /* Padding */
+      border-radius: 5px; /* Rounded corners */
+      cursor: pointer; /* Pointer cursor */
+      transition: background-color 0.3s; /* Smooth transition */
+    }
+
+    .delete-button {
+      background-color: #e74c3c; /* Red background for delete */
+    }
+
+    .update-button:hover {
+      background-color: #27ae60; /* Darker green on hover */
+    }
+
+    .delete-button:hover {
+      background-color: #c0392b; /* Darker red on hover */
     }
 
     /* Show buttons when visible */
@@ -83,6 +103,24 @@
     /* Show cancel button when visible */
     .edit-actions.visible .cancel-button {
       display: inline; /* Show when visible */
+    }
+
+    /* Maintenance item buttons alignment */
+    .maintenance-info {
+      display: flex; /* Flexbox for layout */
+      align-items: center; /* Center vertically */
+      gap: 10px; /* Space between buttons */
+      margin-left: auto; /* Push to the right */
+      min-width: 200px; /* Ensure there's enough space for buttons */
+      justify-content: flex-end; /* Align buttons to the end */
+    }
+
+    /* Flexbox for maintenance items */
+    .maintenance-item {
+      display: flex; /* Flex layout */
+      justify-content: space-between; /* Space between item details and actions */
+      align-items: center; /* Align vertically */
+      width: 100%; /* Full width */
     }
   </style>
 </head>
@@ -120,6 +158,40 @@
         </li>
       <% }) %>
     </ul>
+
+    <h3>Add Maintenance Record</h3>
+    <form action="/add-maintenance/<%= car._id %>" method="POST" class="add-maintenance-form">
+      <input type="text" name="description" placeholder="Description" required />
+      <input type="date" name="date" required />
+      <button type="submit" class="add-button">Add Maintenance</button>
+    </form>
+
+    <h2>Maintenance Records:</h2>
+    <ul class="maintenance-list">
+      <% maintenanceRecords.forEach(record => { %>
+        <li class="maintenance-item">
+          <strong><%= record.description %></strong>
+          <span>
+            <%= typeof record.date === 'string' ? record.date : record.date.toISOString().split('T')[0] %>
+          </span>
+          <div class="maintenance-info">
+            <button type="button" class="edit-button" onclick="toggleMaintenanceEdit('<%= record._id %>')">Edit</button>
+            <div id="edit-actions-maintenance-<%= record._id %>" class="edit-actions">
+              <form action="/edit-maintenance/<%= car._id %>/<%= record._id %>" method="POST" class="edit-form maintenance-actions">
+                <input type="text" name="description" placeholder="Description" required value="<%= record.description %>" />
+                <input type="date" name="date" required value="<%= typeof record.date === 'string' ? record.date : record.date.toISOString().split('T')[0] %>" />
+                <button type="submit" class="update-button">Update</button>
+              </form>
+              <form action="/delete-maintenance/<%= car._id %>/<%= record._id %>" method="POST" class="delete-form">
+                <button type="submit" class="delete-button">Delete</button>
+              </form>
+              <button type="button" class="cancel-button" onclick="toggleMaintenanceEdit('<%= record._id %>')">X</button>
+            </div>
+          </div>
+        </li>
+      <% }) %>
+    </ul>
+
     <a href="/" class="back-link">Back to Car List</a>
   </div>
 
@@ -127,6 +199,19 @@
     function toggleEdit(partId) {
       const actionsDiv = document.getElementById(`edit-actions-${partId}`);
       const editButton = document.querySelector(`.edit-button[onclick="toggleEdit('${partId}')"]`);
+
+      if (actionsDiv.classList.contains('visible')) {
+        actionsDiv.classList.remove('visible'); // Hide the edit actions
+        editButton.style.display = 'inline'; // Show the edit button again
+      } else {
+        actionsDiv.classList.add('visible'); // Show the edit actions
+        editButton.style.display = 'none'; // Hide the edit button when editing
+      }
+    }
+
+    function toggleMaintenanceEdit(recordId) {
+      const actionsDiv = document.getElementById(`edit-actions-maintenance-${recordId}`);
+      const editButton = document.querySelector(`.edit-button[onclick="toggleMaintenanceEdit('${recordId}')"]`);
 
       if (actionsDiv.classList.contains('visible')) {
         actionsDiv.classList.remove('visible'); // Hide the edit actions
