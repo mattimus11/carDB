@@ -13,26 +13,26 @@
     <h2>Parts:</h2>
     <ul class="parts-list">
       <% parts.forEach(part => { %>
-      <li class="part-item">
-        <strong><%= part.partName %>:</strong> <%= part.partDescription %>
-        <div class="part-actions">
-          <form action="/delete-part/<%= car._id %>/<%= part._id %>" method="POST" class="delete-form">
-            <button type="submit" class="delete-button">Delete</button>
-          </form>
-          <form action="/edit-part/<%= car._id %>/<%= part._id %>" method="POST" class="edit-form">
-            <input type="text" name="partName" placeholder="New Part Name" required />
-            <input type="text" name="partDescription" placeholder="New Description" required />
-            <button type="submit" class="edit-button">Edit</button>
-          </form>
-        </div>
-      </li>
+        <li class="part-item">
+          <strong><%= part.partName %>: <%= part.partDescription %></strong>
+          <span> (<%= part.quantity %>)</span> <!-- Display quantity without the word "Quantity" -->
+          <div class="part-info" style="display: flex; align-items: center;">
+              <form action="/edit-part/<%= car._id %>/<%= part._id %>" method="POST" class="edit-form part-actions" style="margin-right: 10px;">
+                  <input type="number" name="quantity" placeholder="Quantity" required value="<%= part.quantity %>" />
+                  <button type="submit" class="edit-button">Edit</button>
+              </form>
+              <form action="/delete-part/<%= car._id %>/<%= part._id %>" method="POST" class="delete-form" style="display: inline;">
+                  <button type="submit" class="delete-button">Delete</button>
+              </form>
+          </div>
+        </li>
       <% }) %>
     </ul>
 
     <h3>Add Part</h3>
     <form action="/add-part/<%= car._id %>" method="POST" class="add-part-form">
       <input type="text" name="partName" placeholder="Part Name" required />
-      <input type="text" name="partDescription" placeholder="Description" required />
+      <input type="number" name="quantity" placeholder="Quantity" required />
       <button type="submit" class="add-button">Add Part</button>
     </form>
     

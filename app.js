@@ -93,17 +93,19 @@ app.post("/delete-part/:carId/:partId", async (req, res) => {
 });
 
 // Route to edit a part
+// Route to edit a part
 app.post("/edit-part/:carId/:partId", async (req, res) => {
   const carId = req.params.carId;
   const partId = req.params.partId;
-  const { partName, partDescription } = req.body;
+  const { quantity } = req.body; // Now getting quantity from the request body
   const partsDbName = `${(await db.get(carId)).carID.toLowerCase()}_parts`;
   const partsDb = couch.db.use(partsDbName);
 
   const part = await partsDb.get(partId);
-  await partsDb.insert({ _id: partId, _rev: part._rev, partName, partDescription });
+  await partsDb.insert({ _id: partId, _rev: part._rev, partName: part.partName, quantity }); // Keep partName and update quantity
   res.redirect(`/car/${carId}`);
 });
+
 
 // Start the server
 app.listen(PORT, () => {
